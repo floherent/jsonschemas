@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/floherent/jsonschemas/main/xreporter.json",
+  "title": "xReporter Config",
+  "definitions": {
+    "alphanumeric": {
+      "description": "Alphanumeric constraint pattern ([a-z0-9_], no spaces)",
+      "type": "string",
+      "pattern": "^\\w+$",
+      "examples": ["alpha_numeric", "alphanumeric", "alpha_123", "a1l2p3h4a5n6u7m8e9r0i1c2"]
+    }
+  },
+  "type": "object",
+  "required": ["outdir", "spark", "input_keys"],
+  "additionalProperties": false,
+  "properties": {
+    "outdir": {
+      "description": "Relative or absolute path to save report files",
+      "type": "string",
+      "format": "uri"
+    },
+    "verbose": {
+      "description": "Prints additional information to stdout",
+      "type": "boolean",
+      "default": true
+    },
+    "max_retries": {
+      "description": "Number of retries when failed to obtain access token from Insided",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 3
+    },
+    "bulk_size": {
+      "description": "Execute bulk operations in batches of this size",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 5
+    },
+    "input_keys": {
+      "oneOf": [
+        {
+          "description": "List of keys to use as input for the Execute APIv3",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        {
+          "description": "Key to use as input for the report",
+          "type": "string"
+        }
+      ]
+    },
+    "spark": {
+      "description": "Coherent Spark settings",
+      "type": "object",
+      "properties": {
+        "base_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "bearer_token": {
+          "type": "string"
+        },
+        "synthetic_key": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "tenant": {
+          "type": "string"
+        },
+        "folder": {
+          "description": "Folder name in the Coherent Spark UI",
+          "$comment": "Can be URL encoded",
+          "type": "string"
+        },
+        "service": {
+          "description": "Service name in the Coherent Spark UI",
+          "$comment": "Can be URL encoded",
+          "type": "string"
+        }
+      },
+      "required": ["base_url", "tenant", "folder", "service"],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "description": "Access token with or without the word 'Bearer'",
+          "examples": ["Bearer 123", "123"],
+          "required": ["bearer_token"],
+          "not": {
+            "required": ["synthetic_key"]
+          }
+        },
+        {
+          "description": "Synthetic key with Read and Execute permissions",
+          "required": ["synthetic_key"],
+          "not": {
+            "required": ["bearer_token"]
+          }
+        }
+      ]
+    }
+  }
+}
