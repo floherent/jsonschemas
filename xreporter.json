@@ -25,7 +25,7 @@
       "default": true
     },
     "max_retries": {
-      "description": "Number of retries when failed to obtain access token from Insided",
+      "description": "Number of retries when failed to generate a report",
       "type": "integer",
       "minimum": 0,
       "maximum": 5,
