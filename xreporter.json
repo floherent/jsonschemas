@@ -1,13 +1,13 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/floherent/jsonschemas/main/xreporter.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "xReporter Config",
   "definitions": {
-    "alphanumeric": {
-      "description": "Alphanumeric constraint pattern ([a-z0-9_], no spaces)",
+    "kebabcase": {
+      "description": "Kebab-case constraint pattern (no spaces)",
       "type": "string",
-      "pattern": "^\\w+$",
-      "examples": ["alpha_numeric", "alphanumeric", "alpha_123", "a1l2p3h4a5n6u7m8e9r0i1c2"]
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "examples": ["kebabcase", "kebab-case-123", "kebab-123-case"]
     }
   },
   "type": "object",
@@ -41,7 +41,7 @@
     "input_keys": {
       "oneOf": [
         {
-          "description": "List of keys to use as input for the Execute APIv3",
+          "description": "List of keys to use as inputs for the Execute APIv3",
           "type": "array",
           "items": {
             "type": "string"
@@ -50,8 +50,9 @@
           "uniqueItems": true
         },
         {
-          "description": "Key to use as input for the report",
-          "type": "string"
+          "description": "Comma-separated keys to use as inputs for the report",
+          "type": "string",
+          "examples": ["key1,key2,key3", "key1"]
         }
       ]
     },
@@ -60,8 +61,10 @@
       "type": "object",
       "properties": {
         "base_url": {
+          "description": "Coherent Spark base URL (https://excel.[region].coherent.global)",
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "examples": ["https://excel.us.coherent.global", "https://excel.us.uat.coherent.global/"]
         },
         "bearer_token": {
           "type": "string"
@@ -71,17 +74,17 @@
           "format": "uuid"
         },
         "tenant": {
-          "type": "string"
+          "$ref": "#/definitions/kebabcase"
         },
         "folder": {
           "description": "Folder name in the Coherent Spark UI",
-          "$comment": "Can be URL encoded",
-          "type": "string"
+          "type": "string",
+          "$comment": "Can be URL encoded"
         },
         "service": {
           "description": "Service name in the Coherent Spark UI",
-          "$comment": "Can be URL encoded",
-          "type": "string"
+          "type": "string",
+          "$comment": "Can be URL encoded"
         }
       },
       "required": ["base_url", "tenant", "folder", "service"],
